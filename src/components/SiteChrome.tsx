@@ -90,7 +90,7 @@ export function SiteFooter() {
     ["Terms of Service", "/terms"],
     ["Cookie Policy", "/cookies"],
     ["Disclaimer", "/disclaimer"],
-    ["Sitemap", "/sitemap"],
+    ["Sitemap", "/sitemap.xml"],
   ] as const;
 
   return (
