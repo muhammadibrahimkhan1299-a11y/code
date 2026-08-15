@@ -1,8 +1,6 @@
 [build]
-  publish = "dist"
-
-[functions]
-  included_files = ["dist/**"]
+  command = "npm run build"
+  publish = "dist/client"
 
 [build.environment]
   NODE_VERSION = "20"
