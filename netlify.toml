@@ -1,11 +1,10 @@
 [build]
-  command = "bun install && bun run build"
-  publish = ".output/public"
+  publish = "dist/spa"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[build.environment]
-  BUN_VERSION = "1.2.19"
