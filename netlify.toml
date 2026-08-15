@@ -1,6 +1,8 @@
 [build]
-  command = "npm install && npm run build"
   publish = "dist"
+
+[functions]
+  included_files = ["dist/**"]
 
 [build.environment]
   NODE_VERSION = "20"
