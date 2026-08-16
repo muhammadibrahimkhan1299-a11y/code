@@ -161,7 +161,7 @@ function SlugPage() {
 
           <section
             aria-label={`${tool.name} tool`}
-            className="mt-6 rounded-3xl border border-border bg-card p-5 shadow-card sm:p-7"
+            className="mt-6 rounded-3xl border border-border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift sm:p-7"
           >
             <ToolRenderer tool={tool} />
           </section>

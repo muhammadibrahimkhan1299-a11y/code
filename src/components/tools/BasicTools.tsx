@@ -532,7 +532,7 @@ export function TextTool({ tool, mode }: { tool: Tool; mode: TextMode }) {
           ["Sentences", stats.sentences],
           ["Paragraphs", stats.paragraphs],
         ].map(([label, value]) => (
-          <div key={String(label)} className="rounded-xl border border-border bg-surface px-4 py-3">
+          <div key={String(label)} className="rounded-xl border border-border bg-surface px-4 py-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {label}
             </dt>
