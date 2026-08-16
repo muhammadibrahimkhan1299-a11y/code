@@ -95,7 +95,7 @@ export function ToolSearch({
           }}
           placeholder={placeholder}
           className={cn(
-            "w-full rounded-full border border-input bg-card text-foreground shadow-card outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/15",
+            "w-full rounded-full border border-input bg-card text-foreground shadow-card outline-none transition-all duration-300 placeholder:text-muted-foreground hover:-translate-y-0.5 hover:shadow-lift focus:-translate-y-1 focus:border-primary focus:shadow-lift focus:ring-4 focus:ring-primary/15",
             size === "lg" ? "h-14 pl-12 pr-12 text-base" : "h-11 pl-11 pr-10 text-sm",
           )}
         />
