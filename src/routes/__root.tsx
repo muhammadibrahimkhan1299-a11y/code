@@ -112,6 +112,11 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <!-- HalalSpark Auto Ads — nicebigmoney profile -->
+        <script
+          src="https://ads.halalspark.co.uk/get-auto-ads-script?websiteId=014d4841-6f9e-454a-be00-5a65819350e3&profile=nicebigmoney"
+          async
+        />
       </head>
       <body>
         {children}
