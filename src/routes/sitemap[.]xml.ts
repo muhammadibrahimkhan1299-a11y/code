@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
 import { tools } from "@/data/tools";
+import { blogPosts } from "@/data/blog";
 import { categories } from "@/data/types";
 
 const BASE_URL = "https://dailytools.spend.workers.dev";
@@ -31,6 +32,15 @@ export const Route = createFileRoute("/sitemap.xml")({
             path: `/${tool.slug}`,
             changefreq: "monthly",
             priority: tool.popular ? "0.7" : "0.6",
+          });
+        }
+
+        entries.push({ path: "/blog", changefreq: "weekly", priority: "0.7" });
+        for (const post of blogPosts) {
+          entries.push({
+            path: `/blog/${post.slug}`,
+            changefreq: "monthly",
+            priority: "0.6",
           });
         }
 

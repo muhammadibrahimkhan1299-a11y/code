@@ -5,6 +5,7 @@ import { AdSlot } from "@/components/AdSlot";
 import { ToolCard, ToolGrid } from "@/components/ToolCard";
 import { ToolSearch } from "@/components/ToolSearch";
 import { site } from "@/config/site";
+import { blogPosts } from "@/data/blog";
 import { popularTools, recentTools, tools, toolsByCategory } from "@/data/tools";
 import { categories } from "@/data/types";
 import { getFavoriteSlugs, onFavoritesChange } from "@/lib/favorites";
@@ -150,6 +151,26 @@ function Home() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recentTools(6).map((tool) => (
             <ToolCard key={tool.slug} tool={tool} />
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Learn &amp; guides" description="How-to articles that pair with our tools." href="/blog">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.slice(0, 3).map((post) => (
+            <a
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group rounded-3xl border border-border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
+            >
+              <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                {post.category}
+              </span>
+              <h3 className="mt-2 text-base font-bold leading-snug group-hover:text-primary">
+                {post.title}
+              </h3>
+              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{post.description}</p>
+            </a>
           ))}
         </div>
       </Section>

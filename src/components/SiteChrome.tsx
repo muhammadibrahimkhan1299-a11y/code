@@ -11,6 +11,7 @@ import { categories } from "@/data/types";
 const navLinks = [
   { label: "All tools", to: "/tools" as const },
   ...categories.map((c) => ({ label: c.name, to: `/category/${c.slug}` })),
+  { label: "Guides", to: "/blog" },
 ];
 
 export function SiteHeader() {
@@ -72,6 +73,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   const legal = [
     ["About", "/about"],
+    ["Guides", "/blog"],
     ["Contact", "/contact"],
     ["Privacy Policy", "/privacy"],
     ["Terms of Service", "/terms"],

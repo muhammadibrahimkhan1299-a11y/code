@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { site } from "@/config/site";
+import { blogPosts } from "@/data/blog";
 import { tools } from "@/data/tools";
 import { categories } from "@/data/types";
 
@@ -56,6 +57,27 @@ function SitemapPage() {
             </section>
           );
         })}
+
+        <section>
+          <h2 className="text-lg font-semibold">
+            <Link to="/blog" className="text-primary hover:underline">
+              Guides &amp; articles
+            </Link>
+          </h2>
+          <ul className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
+            {blogPosts.map((post) => (
+              <li key={post.slug}>
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: post.slug }}
+                  className="text-sm text-muted-foreground hover:text-primary"
+                >
+                  {post.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   );

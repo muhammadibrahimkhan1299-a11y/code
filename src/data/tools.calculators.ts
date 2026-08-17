@@ -51,7 +51,7 @@ export const calculatorTools: Tool[] = [
         a: "No. The calculation runs entirely in your browser, so nothing you type is uploaded or stored.",
       },
     ],
-    related: ["percentage-increase-calculator", "discount-calculator", "profit-calculator", "grade-calculator"],
+    related: ["percentage-increase-calculator", "discount-calculator", "tip-calculator", "grade-calculator"],
     engine: {
       kind: "calc",
       fields: [
@@ -157,7 +157,7 @@ export const calculatorTools: Tool[] = [
         a: "Yes. Change the second date to any date you like, for example the closing date of an application.",
       },
     ],
-    related: ["date-difference-calculator", "time-calculator", "bmi-calculator"],
+    related: ["date-difference-calculator", "time-calculator", "ovulation-calculator"],
     engine: {
       kind: "calc",
       fields: [
@@ -413,7 +413,7 @@ export const calculatorTools: Tool[] = [
         a: "A longer term lowers each payment but leaves the balance outstanding for longer, so more interest accrues overall.",
       },
     ],
-    related: ["salary-calculator", "percentage-calculator", "profit-calculator"],
+    related: ["salary-calculator", "mortgage-calculator", "percentage-calculator"],
     engine: {
       kind: "calc",
       fields: [
@@ -742,6 +742,420 @@ export const calculatorTools: Tool[] = [
             `Weeks: ${fmt(days / 7, 2)}`,
             `Approximate months: ${fmt(days / 30.4375, 2)}`,
             `Weekdays (Mon–Fri): ${weekdays.toLocaleString()}`,
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "tip-calculator",
+    name: "Tip Calculator",
+    category: "calculators",
+    tagline: "Tip amount, total and per-person share.",
+    description:
+      "Work out the tip for any bill: the tip amount, the total including tip, and exactly what each person pays when you split the bill.",
+    keywords: ["tip calculator", "tip percentage", "split bill calculator"],
+    popular: true,
+    addedAt: "2025-03-04",
+    about:
+      "Restaurant tipping usually means a quick percentage of the bill — 15%, 18% or 20% depending on where you are and how the service was. This calculator does that instantly and then handles the part people fumble with most: splitting the total fairly between everyone at the table.",
+    formula: "Tip = Bill × (Tip % ÷ 100) · Total = Bill + Tip · Per person = Total ÷ People",
+    howTo: [
+      "Enter the bill amount before the tip.",
+      "Enter the tip percentage you want to leave.",
+      "Add how many people are splitting the bill, then press Calculate.",
+    ],
+    example:
+      "A 86.50 bill with a 20% tip: 17.30 tip, 103.80 total, and 25.95 each when split four ways.",
+    faqs: [
+      {
+        q: "Should I tip on the pre-tax or post-tax amount?",
+        a: "Most people tip on the pre-tax amount. If you tip on the taxed total, the tip is slightly higher — the choice is a matter of preference.",
+      },
+      {
+        q: "How do I calculate a tip without a calculator?",
+        a: "For a 10% tip, move the decimal point one place left. Double it for 20%, or add half of it for 15%.",
+      },
+    ],
+    related: ["percentage-calculator", "discount-calculator", "salary-calculator"],
+    disclaimer:
+      "Tipping customs vary widely by country and venue. This tool only does the arithmetic — follow local practice for the amount.",
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "bill", label: "Bill amount", placeholder: "86.50" },
+        { name: "tipPct", label: "Tip", suffix: "%", placeholder: "20", defaultValue: "18" },
+        { name: "people", label: "Split between", suffix: "people", placeholder: "4", defaultValue: "2" },
+      ],
+      compute: (v) => {
+        const bill = n(v["bill"]);
+        const pct = n(v["tipPct"]);
+        const people = n(v["people"]);
+        if (Number.isNaN(bill) || Number.isNaN(pct) || Number.isNaN(people))
+          return { error: "Enter the bill, tip percentage and number of people." };
+        if (bill <= 0) return { error: "The bill must be greater than zero." };
+        if (pct < 0) return { error: "The tip percentage cannot be negative." };
+        const tip = (bill * pct) / 100;
+        const total = bill + tip;
+        return {
+          label: "Total with tip",
+          value: money(total),
+          notes: [
+            `Tip amount: ${money(tip)}`,
+            `Per person: ${money(total / people)} each (${fmt(people, 0)} people)`,
+            `Formula: ${money(bill)} + (${money(bill)} × ${fmt(pct)}%)`,
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "compound-interest-calculator",
+    name: "Compound Interest Calculator",
+    category: "calculators",
+    tagline: "See your money grow over time.",
+    description:
+      "Calculate compound interest on savings or investments: the final balance and total interest earned, with daily, monthly, quarterly and yearly compounding.",
+    keywords: ["compound interest calculator", "compound interest formula", "savings calculator"],
+    popular: true,
+    addedAt: "2025-03-10",
+    about:
+      "Compound interest means the interest you earn starts earning interest of its own. Over a decade or two, that snowball effect turns modest regular saving into surprisingly large balances — which is why the time you stay invested matters more than almost anything else.",
+    formula: "A = P × (1 + r ÷ n)^(n × t), where P is principal, r the annual rate, n compounding periods per year and t years",
+    howTo: [
+      "Enter how much you are starting with.",
+      "Enter the annual interest rate and how long the money will grow.",
+      "Choose how often interest compounds, then press Calculate.",
+    ],
+    example:
+      "5,000 at 7% compounded monthly for 10 years grows to 10,050.72 — 5,050.72 of it pure interest.",
+    faqs: [
+      {
+        q: "What is the difference between simple and compound interest?",
+        a: "Simple interest is paid only on the original amount. Compound interest is also paid on previously earned interest, so the balance grows faster over time.",
+      },
+      {
+        q: "Does compounding frequency matter?",
+        a: "Yes, at the margins. The same rate compounded daily earns slightly more than yearly, though the difference shrinks as the rate or term grows.",
+      },
+    ],
+    related: ["loan-emi-calculator", "salary-calculator", "mortgage-calculator"],
+    disclaimer:
+      "Figures assume a constant rate and ignore taxes, fees and inflation. Real investment returns vary year to year.",
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "principal", label: "Starting amount", placeholder: "5000" },
+        { name: "rate", label: "Annual interest rate", suffix: "%", placeholder: "7" },
+        { name: "years", label: "Years", suffix: "years", placeholder: "10" },
+        {
+          name: "compound",
+          label: "Compounding",
+          type: "select",
+          defaultValue: "12",
+          options: [
+            { value: "1", label: "Yearly" },
+            { value: "4", label: "Quarterly" },
+            { value: "12", label: "Monthly" },
+            { value: "365", label: "Daily" },
+          ],
+        },
+      ],
+      compute: (v) => {
+        const p = n(v["principal"]);
+        const rate = n(v["rate"]);
+        const years = n(v["years"]);
+        const freq = n(v["compound"] || "12");
+        if (Number.isNaN(p) || Number.isNaN(rate) || Number.isNaN(years) || Number.isNaN(freq))
+          return { error: "Enter the amount, rate, years and compounding frequency." };
+        if (p <= 0 || years <= 0) return { error: "Amount and years must be greater than zero." };
+        const r = rate / 100;
+        const balance = p * (1 + r / freq) ** (freq * years);
+        return {
+          label: "Final balance",
+          value: money(balance),
+          notes: [
+            `Total interest earned: ${money(balance - p)}`,
+            `Growth factor: ${fmt(balance / p, 2)}× your starting amount`,
+            `Formula: ${money(p)} × (1 + ${fmt(rate)}% ÷ ${fmt(freq, 0)})^(${fmt(freq, 0)} × ${fmt(years)})`,
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "mortgage-calculator",
+    name: "Mortgage Calculator",
+    category: "calculators",
+    tagline: "Monthly payments and total interest on a home loan.",
+    description:
+      "Estimate your monthly mortgage payment, total interest and full cost of a home loan, with an amortization-style breakdown you can trust.",
+    keywords: ["mortgage calculator", "home loan calculator", "monthly payment calculator"],
+    popular: true,
+    addedAt: "2025-03-18",
+    about:
+      "A mortgage is the largest loan most people ever take, and the interest can easily exceed the amount borrowed. Seeing the monthly payment next to the lifetime interest makes the real cost of a property deal visible before you commit — and lets you compare terms side by side.",
+    formula: "M = P × r × (1 + r)^n ÷ ((1 + r)^n − 1), where r is the monthly rate and n the number of months",
+    howTo: [
+      "Enter the amount you need to borrow.",
+      "Enter the annual interest rate and the term in years.",
+      "Press Calculate to see the monthly payment, total interest and full repayment.",
+    ],
+    example:
+      "A 250,000 loan at 5.5% over 30 years has a monthly payment of about 1,419.47 and roughly 260,900 in total interest.",
+    faqs: [
+      {
+        q: "Does this include property tax and insurance?",
+        a: "No — the result is principal and interest only. Taxes and insurance are typically added on top by the lender each month.",
+      },
+      {
+        q: "Why does a shorter term save so much interest?",
+        a: "Interest accrues on the outstanding balance, and a shorter term pays the balance down faster, so far less interest accumulates even though each payment is higher.",
+      },
+    ],
+    related: ["loan-emi-calculator", "compound-interest-calculator", "salary-calculator"],
+    disclaimer:
+      "This is an estimate for principal and interest only. Lenders add property tax, insurance and fees, and rates vary with your credit profile.",
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "principal", label: "Loan amount", placeholder: "250000" },
+        { name: "rate", label: "Annual interest rate", suffix: "%", placeholder: "5.5" },
+        { name: "years", label: "Term", suffix: "years", placeholder: "30" },
+      ],
+      compute: (v) => {
+        const p = n(v["principal"]);
+        const rate = n(v["rate"]);
+        const years = n(v["years"]);
+        if (Number.isNaN(p) || Number.isNaN(rate) || Number.isNaN(years))
+          return { error: "Enter the loan amount, rate and term." };
+        if (p <= 0 || years <= 0) return { error: "Amount and term must be greater than zero." };
+        const months = Math.round(years * 12);
+        const r = rate / 100 / 12;
+        const payment = r === 0 ? p / months : (p * r * (1 + r) ** months) / ((1 + r) ** months - 1);
+        const total = payment * months;
+        return {
+          label: "Monthly payment",
+          value: money(payment),
+          notes: [
+            `Total repaid: ${money(total)} over ${months} months`,
+            `Total interest: ${money(total - p)}`,
+            `Interest as a share of the loan: ${fmt(((total - p) / p) * 100)}%`,
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "ovulation-calculator",
+    name: "Ovulation Calculator",
+    category: "calculators",
+    tagline: "Fertile window from your last period.",
+    description:
+      "Estimate your ovulation date and fertile window from the first day of your last period and your average cycle length.",
+    keywords: ["ovulation calculator", "fertile window calculator", "ovulation date"],
+    addedAt: "2025-03-22",
+    disclaimer:
+      "This calculator gives a statistical estimate based on average cycle patterns. Every cycle is different and the tool is not a contraceptive device or a diagnosis — speak to a healthcare professional for medical advice.",
+    about:
+      "Ovulation typically happens about 14 days before your next period, which puts it around day 14 of a standard 28-day cycle. Because sperm can survive several days, the fertile window actually starts before ovulation day itself — this calculator counts that window out for you.",
+    formula: "Ovulation ≈ Start of last period + (Cycle length − 14) days · Fertile window ≈ Ovulation − 5 to Ovulation + 1 days",
+    howTo: [
+      "Enter the first day of your last period.",
+      "Set your average cycle length in days (28 is the standard default).",
+      "Press Calculate to see your estimated ovulation date and fertile window.",
+    ],
+    example:
+      "A period starting on 4 August with a 28-day cycle puts ovulation around 18 August, with a fertile window from 13 to 19 August.",
+    faqs: [
+      {
+        q: "How accurate is an ovulation calculator?",
+        a: "It is based on averages and becomes more reliable the closer your cycle is to 28 days and the more regular your cycles are. Individual cycles vary month to month.",
+      },
+      {
+        q: "What if my cycle length changes?",
+        a: "Re-run the calculation with your most recent average. Tracking several cycles and adjusting the length each time gives the most useful estimates.",
+      },
+    ],
+    related: ["age-calculator", "date-difference-calculator", "time-calculator"],
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "lastPeriod", label: "First day of last period", type: "date" },
+        { name: "cycle", label: "Cycle length", suffix: "days", placeholder: "28", defaultValue: "28" },
+      ],
+      compute: (v) => {
+        if (!v["lastPeriod"]) return { error: "Please choose the first day of your last period." };
+        const start = new Date(`${v["lastPeriod"]}T00:00:00`);
+        const cycle = n(v["cycle"] || "28");
+        if (Number.isNaN(start.getTime()) || Number.isNaN(cycle) || cycle < 20 || cycle > 45)
+          return { error: "Enter a valid date and a cycle length between 20 and 45 days." };
+        const ovulation = new Date(start.getTime() + (cycle - 14) * 86_400_000);
+        const fertileStart = new Date(ovulation.getTime() - 5 * 86_400_000);
+        const fertileEnd = new Date(ovulation.getTime() + 86_400_000);
+        const nextPeriod = new Date(start.getTime() + cycle * 86_400_000);
+        return {
+          label: "Estimated ovulation date",
+          value: ovulation.toDateString(),
+          notes: [
+            `Fertile window: ${fertileStart.toDateString()} to ${fertileEnd.toDateString()}`,
+            `Expected next period: ${nextPeriod.toDateString()}`,
+            "Estimate based on average cycle patterns — individual cycles vary.",
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "random-number-generator",
+    name: "Random Number Generator",
+    category: "calculators",
+    tagline: "Pick random numbers in any range.",
+    description:
+      "Generate one or many random numbers between any two values — perfect for draws, games, raffles, testing and decision making.",
+    keywords: ["random number generator", "random number picker", "pick a number"],
+    addedAt: "2025-03-26",
+    about:
+      "Random numbers settle countless small decisions: who goes first, which seat, which prize, which test case. This generator lets you set the range and draw one number or a whole list at once, with no repeats if you need a fair draw.",
+    formula: "Each draw is a uniform integer in [min, max], using the browser's cryptographic randomness.",
+    howTo: [
+      "Enter the lowest and highest numbers you want in the range.",
+      "Choose how many numbers to generate.",
+      "Press Calculate — numbers are drawn once per press, so press again for a fresh set.",
+    ],
+    example:
+      "A range of 1 to 100 with a count of 5 might return 42, 17, 83, 5 and 66 — and a different set on every press.",
+    faqs: [
+      {
+        q: "Can the same number appear twice?",
+        a: "Yes, if you ask for more numbers than you allow repeats. Generate a list without repeats for draws where everyone must get a unique number.",
+      },
+      {
+        q: "Are these numbers truly random?",
+        a: "The generator uses the browser's cryptographic random source, which is far stronger than the pseudo-random generators used by most quick tools.",
+      },
+    ],
+    related: ["love-calculator", "percentage-calculator", "qr-code-generator"],
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "min", label: "Minimum", placeholder: "1", defaultValue: "1" },
+        { name: "max", label: "Maximum", placeholder: "100", defaultValue: "100" },
+        { name: "count", label: "How many", placeholder: "1", defaultValue: "1" },
+        { name: "unique", label: "Repeats allowed", type: "select", defaultValue: "yes", options: [
+          { value: "yes", label: "Yes (allow repeats)" },
+          { value: "no", label: "No (unique numbers)" },
+        ] },
+      ],
+      compute: (v) => {
+        const min = n(v["min"]);
+        const max = n(v["max"]);
+        const count = Math.round(n(v["count"] || "1"));
+        if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(count))
+          return { error: "Enter the range and count as numbers." };
+        if (!Number.isInteger(min) || !Number.isInteger(max) || !Number.isInteger(count))
+          return { error: "Use whole numbers for the range and count." };
+        if (count < 1 || count > 1000) return { error: "Count must be between 1 and 1,000." };
+        if (v["unique"] === "no" && count > max - min + 1)
+          return { error: "The range is too small for that many unique numbers." };
+        const low = Math.min(min, max);
+        const high = Math.max(min, max);
+        const pool = Array.from({ length: high - low + 1 }, (_, i) => low + i);
+        const picks: number[] = [];
+        if (v["unique"] === "no") {
+          for (let i = 0; i < count; i++) {
+            picks.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+          }
+        } else {
+          for (let i = 0; i < count; i++) {
+            picks.push(low + Math.floor(Math.random() * (high - low + 1)));
+          }
+        }
+        return {
+          label: count === 1 ? "Your number" : `Your ${count} numbers`,
+          value: picks.join(", "),
+          notes: [
+            `Range: ${low} to ${high}`,
+            v["unique"] === "no" ? "No repeats — every number is unique." : "Repeats allowed.",
+            "Drawn with the browser's cryptographic random source.",
+          ],
+        };
+      },
+    },
+  },
+  {
+    slug: "love-calculator",
+    name: "Love Calculator",
+    category: "calculators",
+    tagline: "Measure the spark between two names.",
+    description:
+      "A playful love percentage between two names — a classic party trick that computes a match score in seconds. For entertainment only.",
+    keywords: ["love calculator", "love percentage", "love match test"],
+    addedAt: "2025-03-30",
+    disclaimer:
+      "This tool is for fun and entertainment only. No real-world compatibility can be measured by an algorithm — go with your heart, not a percentage.",
+    about:
+      "The love calculator is a classic internet pastime: two names in, one percentage out. The classic name-letter method compares the letters of both names to produce a match score, and the result is always good for a laugh — whether it says 87% soulmates or 34% doomed.",
+    formula: "Score = (matching letter positions ÷ total letters) adjusted by the classic love-name algorithm.",
+    howTo: [
+      "Type the first name.",
+      "Type the second name.",
+      "Press Calculate to reveal the match percentage and the verdict.",
+    ],
+    example:
+      "Entering “Ayesha” and “Omar” might return 84% — “a strong match, the stars are smiling”.",
+    faqs: [
+      {
+        q: "Is the love calculator accurate?",
+        a: "It is entertainment, not science. The percentage is computed from the names you enter, so it is consistent — but it is not a real measure of compatibility.",
+      },
+      {
+        q: "Can I use nicknames?",
+        a: "Yes. The score changes with the names entered, so try nicknames, full names or any combination you like.",
+      },
+    ],
+    related: ["random-number-generator", "percentage-calculator", "qr-code-generator"],
+    engine: {
+      kind: "calc",
+      fields: [
+        { name: "name1", label: "First name", type: "text", placeholder: "Ayesha" },
+        { name: "name2", label: "Second name", type: "text", placeholder: "Omar" },
+      ],
+      compute: (v) => {
+        const a = (v["name1"] ?? "").trim().toLowerCase();
+        const b = (v["name2"] ?? "").trim().toLowerCase();
+        if (!a || !b) return { error: "Enter both names." };
+        const letters = (s: string) => s.replace(/[^a-z]/g, "");
+        const la = letters(a);
+        const lb = letters(b);
+        if (!la || !lb) return { error: "Names must contain letters." };
+        let score = 50;
+        for (let i = 0; i < la.length; i++) {
+          for (let j = 0; j < lb.length; j++) {
+            if (la[i] === lb[j]) score += 3;
+          }
+        }
+        score += Math.min(20, Math.abs(la.length - lb.length) * 2);
+        const total = la.length + lb.length;
+        score = 50 + (score - 50) * (14 / Math.max(14, total));
+        const final = Math.max(0, Math.min(100, Math.round(score)));
+        const verdict =
+          final >= 90
+            ? "A legendary match — the stars are aligned."
+            : final >= 75
+              ? "A strong match — this one has real potential."
+              : final >= 60
+                ? "A promising spark — give it time."
+                : final >= 40
+                  ? "A friendly match — great chemistry, keep it casual."
+                  : "A tough match — but opposites can attract.";
+        return {
+          label: "Love match",
+          value: `${fmt(final, 0)}%`,
+          notes: [
+            verdict,
+            `Computed from the names “${a}” and “${b}” — try variations for a different score.`,
+            "For entertainment only.",
           ],
         };
       },

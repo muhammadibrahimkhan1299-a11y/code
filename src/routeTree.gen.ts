@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
@@ -20,6 +21,7 @@ import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as RobotsTxtRouteImport } from './routes/robots.txt'
 
@@ -36,6 +38,11 @@ const SlugRoute = SlugRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -78,6 +85,11 @@ const ToolsRoute = ToolsRouteImport.update({
   path: '/tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -93,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -101,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/robots/txt': typeof RobotsTxtRoute
 }
@@ -108,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -116,6 +131,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/robots/txt': typeof RobotsTxtRoute
 }
@@ -124,6 +140,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -132,6 +149,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/robots/txt': typeof RobotsTxtRoute
 }
@@ -141,6 +159,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/cookies'
     | '/disclaimer'
@@ -149,6 +168,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/tools'
+    | '/blog/$slug'
     | '/category/$slug'
     | '/robots/txt'
   fileRoutesByTo: FileRoutesByTo
@@ -156,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/cookies'
     | '/disclaimer'
@@ -164,6 +185,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/tools'
+    | '/blog/$slug'
     | '/category/$slug'
     | '/robots/txt'
   id:
@@ -171,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/cookies'
     | '/disclaimer'
@@ -179,6 +202,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/tools'
+    | '/blog/$slug'
     | '/category/$slug'
     | '/robots/txt'
   fileRoutesById: FileRoutesById
@@ -187,6 +211,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SlugRoute: typeof SlugRoute
   AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRouteWithChildren
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DisclaimerRoute: typeof DisclaimerRoute
@@ -220,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -278,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -295,10 +334,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SlugRoute: SlugRoute,
   AboutRoute: AboutRoute,
+  BlogRoute: BlogRouteWithChildren,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DisclaimerRoute: DisclaimerRoute,
