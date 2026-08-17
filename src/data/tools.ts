@@ -32,7 +32,6 @@ export function popularTools(): Tool[] {
     "discount-calculator",
     "tip-calculator",
     "gpa-calculator",
-    "compound-interest-calculator",
     "length-converter",
     "word-counter",
     "image-compressor",
