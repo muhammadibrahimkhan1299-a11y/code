@@ -157,7 +157,7 @@ export const calculatorTools: Tool[] = [
         a: "Yes. Change the second date to any date you like, for example the closing date of an application.",
       },
     ],
-    related: ["date-difference-calculator", "time-calculator", "ovulation-calculator"],
+    related: ["date-difference-calculator", "time-calculator"],
     engine: {
       kind: "calc",
       fields: [
@@ -804,66 +804,6 @@ export const calculatorTools: Tool[] = [
             `Tip amount: ${money(tip)}`,
             `Per person: ${money(total / people)} each (${fmt(people, 0)} people)`,
             `Formula: ${money(bill)} + (${money(bill)} × ${fmt(pct)}%)`,
-          ],
-        };
-      },
-    },
-  },
-  {
-    slug: "ovulation-calculator",
-    name: "Ovulation Calculator",
-    category: "calculators",
-    tagline: "Fertile window from your last period.",
-    description:
-      "Estimate your ovulation date and fertile window from the first day of your last period and your average cycle length.",
-    keywords: ["ovulation calculator", "fertile window calculator", "ovulation date"],
-    addedAt: "2025-03-22",
-    disclaimer:
-      "This calculator gives a statistical estimate based on average cycle patterns. Every cycle is different and the tool is not a contraceptive device or a diagnosis — speak to a healthcare professional for medical advice.",
-    about:
-      "Ovulation typically happens about 14 days before your next period, which puts it around day 14 of a standard 28-day cycle. Because sperm can survive several days, the fertile window actually starts before ovulation day itself — this calculator counts that window out for you.",
-    formula: "Ovulation ≈ Start of last period + (Cycle length − 14) days · Fertile window ≈ Ovulation − 5 to Ovulation + 1 days",
-    howTo: [
-      "Enter the first day of your last period.",
-      "Set your average cycle length in days (28 is the standard default).",
-      "Press Calculate to see your estimated ovulation date and fertile window.",
-    ],
-    example:
-      "A period starting on 4 August with a 28-day cycle puts ovulation around 18 August, with a fertile window from 13 to 19 August.",
-    faqs: [
-      {
-        q: "How accurate is an ovulation calculator?",
-        a: "It is based on averages and becomes more reliable the closer your cycle is to 28 days and the more regular your cycles are. Individual cycles vary month to month.",
-      },
-      {
-        q: "What if my cycle length changes?",
-        a: "Re-run the calculation with your most recent average. Tracking several cycles and adjusting the length each time gives the most useful estimates.",
-      },
-    ],
-    related: ["age-calculator", "date-difference-calculator", "time-calculator"],
-    engine: {
-      kind: "calc",
-      fields: [
-        { name: "lastPeriod", label: "First day of last period", type: "date" },
-        { name: "cycle", label: "Cycle length", suffix: "days", placeholder: "28", defaultValue: "28" },
-      ],
-      compute: (v) => {
-        if (!v["lastPeriod"]) return { error: "Please choose the first day of your last period." };
-        const start = new Date(`${v["lastPeriod"]}T00:00:00`);
-        const cycle = n(v["cycle"] || "28");
-        if (Number.isNaN(start.getTime()) || Number.isNaN(cycle) || cycle < 20 || cycle > 45)
-          return { error: "Enter a valid date and a cycle length between 20 and 45 days." };
-        const ovulation = new Date(start.getTime() + (cycle - 14) * 86_400_000);
-        const fertileStart = new Date(ovulation.getTime() - 5 * 86_400_000);
-        const fertileEnd = new Date(ovulation.getTime() + 86_400_000);
-        const nextPeriod = new Date(start.getTime() + cycle * 86_400_000);
-        return {
-          label: "Estimated ovulation date",
-          value: ovulation.toDateString(),
-          notes: [
-            `Fertile window: ${fertileStart.toDateString()} to ${fertileEnd.toDateString()}`,
-            `Expected next period: ${nextPeriod.toDateString()}`,
-            "Estimate based on average cycle patterns — individual cycles vary.",
           ],
         };
       },
