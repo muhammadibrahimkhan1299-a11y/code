@@ -12,7 +12,9 @@ import {
 } from "@/components/ui/accordion";
 import { site } from "@/config/site";
 import { getTool, relatedTools } from "@/data/tools";
+import { toolLongContent } from "@/data/tools.content";
 import { getCategory } from "@/data/types";
+import { touchRecent } from "@/lib/recently-used";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
 
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/$slug")({
       return { meta: [{ title: `Not found — ${site.name}` }, { name: "robots", content: "noindex" }] };
     }
     const title = `${tool.name} | ${site.name}`;
+    const category = getCategory(tool.category);
     return {
       meta: [
         { title },
@@ -44,12 +47,40 @@ export const Route = createFileRoute("/$slug")({
             "@context": "https://schema.org",
             "@graph": [
               {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: "https://dailytools.spend.workers.dev/" },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: category.name,
+                    item: `https://dailytools.spend.workers.dev/category/${category.slug}`,
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: tool.name,
+                    item: `https://dailytools.spend.workers.dev/${tool.slug}`,
+                  },
+                ],
+              },
+              {
                 "@type": "SoftwareApplication",
                 name: tool.name,
                 applicationCategory: "UtilitiesApplication",
                 operatingSystem: "Any",
                 description: tool.description,
                 offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+              },
+              {
+                "@type": "HowTo",
+                name: `How to use the ${tool.name}`,
+                description: tool.description,
+                step: tool.howTo.map((stepText, i) => ({
+                  "@type": "HowToStep",
+                  position: i + 1,
+                  text: stepText,
+                })),
               },
               {
                 "@type": "FAQPage",
@@ -132,13 +163,17 @@ function SlugPage() {
   const tool = getTool(slug);
 
   useEffect(() => {
-    if (tool) track("tool_opened", { tool: tool.slug, category: tool.category });
+    if (tool) {
+      track("tool_opened", { tool: tool.slug, category: tool.category });
+      touchRecent(tool.slug);
+    }
   }, [tool]);
 
   if (!tool) return <ShortLinkResolver code={slug} />;
 
   const category = getCategory(tool.category);
   const related = relatedTools(tool);
+  const longContent = toolLongContent[tool.slug];
 
   return (
     <div className="container-page py-8">
@@ -178,6 +213,9 @@ function SlugPage() {
           <article className="prose-tool mt-10 max-w-3xl">
             <h2>About the {tool.name}</h2>
             <p>{tool.about}</p>
+            {longContent?.map((paragraph) => (
+              <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+            ))}
 
             <h2>How to use the {tool.name}</h2>
             <ol>

@@ -1,21 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import { AdSlot } from "@/components/AdSlot";
 import { ToolCard, ToolGrid } from "@/components/ToolCard";
 import { ToolSearch } from "@/components/ToolSearch";
 import { site } from "@/config/site";
-import { popularTools, recentTools, toolsByCategory } from "@/data/tools";
+import { popularTools, recentTools, tools, toolsByCategory } from "@/data/tools";
 import { categories } from "@/data/types";
+import { getFavoriteSlugs, onFavoritesChange } from "@/lib/favorites";
+import { getRecentSlugs } from "@/lib/recently-used";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { property: "og:title", content: `${site.name} — Free Online Tools for Everyday Tasks` },
+      { title: `${site.name} — Fast, Free & Private Online Tools` },
+      { name: "description", content: site.description },
+      { property: "og:title", content: `${site.name} — Fast, Free & Private Online Tools` },
       { property: "og:description", content: site.description },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: `${site.name} — Free Online Tools` },
+      { name: "twitter:title", content: `${site.name} — Fast, Free & Private Online Tools` },
       { name: "twitter:description", content: site.description },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -68,7 +73,27 @@ function Section({
   );
 }
 
+const trustBadges = [
+  "No sign-up needed",
+  "Files never leave your device",
+  "No cookies, no tracking",
+];
+
 function Home() {
+  const [favoriteSlugs, setFavoriteSlugs] = useState<string[]>(() => getFavoriteSlugs());
+  const [recentSlugs, setRecentSlugs] = useState<string[]>(() => getRecentSlugs());
+
+  useEffect(() => {
+    const unsubscribe = onFavoritesChange(setFavoriteSlugs);
+    return unsubscribe;
+  }, []);
+
+  const bySlug = (slug: string) => tools.find((t) => t.slug === slug);
+  const favorites = favoriteSlugs.map(bySlug).filter((t): t is NonNullable<typeof t> => Boolean(t));
+  const recent = recentSlugs
+    .map(bySlug)
+    .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
   return (
     <div className="container-page pb-8">
       <section className="py-14 text-center sm:py-20">
@@ -76,21 +101,46 @@ function Home() {
           {site.tagline}
         </p>
         <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-          Free Online Tools for Everyday Tasks
+          Fast, Free & Private Online Tools
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
           Calculate, convert, compress, generate, shorten and manage your everyday tasks—all in one
-          place.
+          place. Every tool runs in your browser, so your data never leaves your device.
         </p>
         <div className="mx-auto mt-8 max-w-2xl">
           <ToolSearch size="lg" autoFocus={false} />
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">
-          No sign-up needed · Files never leave your device · {popularTools().length}+ popular tools
-        </p>
+        <div className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {trustBadges.map((badge) => (
+            <span key={badge} className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
+              {badge}
+            </span>
+          ))}
+        </div>
       </section>
 
       <AdSlot position="header" className="mb-6" />
+
+      {recent.length > 0 ? (
+        <Section title="Recently used" description="Pick up where you left off." href="/tools">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recent.slice(0, 8).map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+          </div>
+        </Section>
+      ) : null}
+
+      {favorites.length > 0 ? (
+        <Section title="Your favorites" description="Saved on this device only.">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {favorites.slice(0, 8).map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+          </div>
+        </Section>
+      ) : null}
 
       <Section title="Most popular" description="The tools people reach for every day." href="/tools">
         <ToolGrid tools={popularTools()} />

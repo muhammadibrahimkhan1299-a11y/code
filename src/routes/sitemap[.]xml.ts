@@ -4,7 +4,7 @@ import type {} from "@tanstack/react-start";
 import { tools } from "@/data/tools";
 import { categories } from "@/data/types";
 
-const BASE_URL = "https://utilityflow.lovable.app";
+const BASE_URL = "https://dailytools.spend.workers.dev";
 
 interface SitemapEntry {
   path: string;

@@ -38,15 +38,34 @@ export const Route = createFileRoute("/category/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-              { "@type": "ListItem", position: 2, name: "All tools", item: "/tools" },
+            "@graph": [
               {
-                "@type": "ListItem",
-                position: 3,
-                name: category.name,
-                item: `/category/${category.slug}`,
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: "https://dailytools.spend.workers.dev/" },
+                  { "@type": "ListItem", position: 2, name: "All tools", item: "https://dailytools.spend.workers.dev/tools" },
+                  {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: category.name,
+                    item: `https://dailytools.spend.workers.dev/category/${category.slug}`,
+                  },
+                ],
+              },
+              {
+                "@type": "CollectionPage",
+                name: title,
+                description: category.description,
+                mainEntity: {
+                  "@type": "ItemList",
+                  numberOfItems: toolsByCategory(category.id).length,
+                  itemListElement: toolsByCategory(category.id).map((t, i) => ({
+                    "@type": "ListItem",
+                    position: i + 1,
+                    name: t.name,
+                    url: `https://dailytools.spend.workers.dev/${t.slug}`,
+                  })),
+                },
               },
             ],
           }),
