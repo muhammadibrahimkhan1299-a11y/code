@@ -413,7 +413,7 @@ export const calculatorTools: Tool[] = [
         a: "A longer term lowers each payment but leaves the balance outstanding for longer, so more interest accrues overall.",
       },
     ],
-    related: ["salary-calculator", "mortgage-calculator", "percentage-calculator"],
+    related: ["salary-calculator", "percentage-calculator", "profit-calculator"],
     engine: {
       kind: "calc",
       fields: [
@@ -839,7 +839,7 @@ export const calculatorTools: Tool[] = [
         a: "Yes, at the margins. The same rate compounded daily earns slightly more than yearly, though the difference shrinks as the rate or term grows.",
       },
     ],
-    related: ["loan-emi-calculator", "salary-calculator", "mortgage-calculator"],
+    related: ["loan-emi-calculator", "salary-calculator", "percentage-calculator"],
     disclaimer:
       "Figures assume a constant rate and ignore taxes, fees and inflation. Real investment returns vary year to year.",
     engine: {
@@ -878,69 +878,6 @@ export const calculatorTools: Tool[] = [
             `Total interest earned: ${money(balance - p)}`,
             `Growth factor: ${fmt(balance / p, 2)}× your starting amount`,
             `Formula: ${money(p)} × (1 + ${fmt(rate)}% ÷ ${fmt(freq, 0)})^(${fmt(freq, 0)} × ${fmt(years)})`,
-          ],
-        };
-      },
-    },
-  },
-  {
-    slug: "mortgage-calculator",
-    name: "Mortgage Calculator",
-    category: "calculators",
-    tagline: "Monthly payments and total interest on a home loan.",
-    description:
-      "Estimate your monthly mortgage payment, total interest and full cost of a home loan, with an amortization-style breakdown you can trust.",
-    keywords: ["mortgage calculator", "home loan calculator", "monthly payment calculator"],
-    popular: true,
-    addedAt: "2025-03-18",
-    about:
-      "A mortgage is the largest loan most people ever take, and the interest can easily exceed the amount borrowed. Seeing the monthly payment next to the lifetime interest makes the real cost of a property deal visible before you commit — and lets you compare terms side by side.",
-    formula: "M = P × r × (1 + r)^n ÷ ((1 + r)^n − 1), where r is the monthly rate and n the number of months",
-    howTo: [
-      "Enter the amount you need to borrow.",
-      "Enter the annual interest rate and the term in years.",
-      "Press Calculate to see the monthly payment, total interest and full repayment.",
-    ],
-    example:
-      "A 250,000 loan at 5.5% over 30 years has a monthly payment of about 1,419.47 and roughly 260,900 in total interest.",
-    faqs: [
-      {
-        q: "Does this include property tax and insurance?",
-        a: "No — the result is principal and interest only. Taxes and insurance are typically added on top by the lender each month.",
-      },
-      {
-        q: "Why does a shorter term save so much interest?",
-        a: "Interest accrues on the outstanding balance, and a shorter term pays the balance down faster, so far less interest accumulates even though each payment is higher.",
-      },
-    ],
-    related: ["loan-emi-calculator", "compound-interest-calculator", "salary-calculator"],
-    disclaimer:
-      "This is an estimate for principal and interest only. Lenders add property tax, insurance and fees, and rates vary with your credit profile.",
-    engine: {
-      kind: "calc",
-      fields: [
-        { name: "principal", label: "Loan amount", placeholder: "250000" },
-        { name: "rate", label: "Annual interest rate", suffix: "%", placeholder: "5.5" },
-        { name: "years", label: "Term", suffix: "years", placeholder: "30" },
-      ],
-      compute: (v) => {
-        const p = n(v["principal"]);
-        const rate = n(v["rate"]);
-        const years = n(v["years"]);
-        if (Number.isNaN(p) || Number.isNaN(rate) || Number.isNaN(years))
-          return { error: "Enter the loan amount, rate and term." };
-        if (p <= 0 || years <= 0) return { error: "Amount and term must be greater than zero." };
-        const months = Math.round(years * 12);
-        const r = rate / 100 / 12;
-        const payment = r === 0 ? p / months : (p * r * (1 + r) ** months) / ((1 + r) ** months - 1);
-        const total = payment * months;
-        return {
-          label: "Monthly payment",
-          value: money(payment),
-          notes: [
-            `Total repaid: ${money(total)} over ${months} months`,
-            `Total interest: ${money(total - p)}`,
-            `Interest as a share of the loan: ${fmt(((total - p) / p) * 100)}%`,
           ],
         };
       },
@@ -1035,7 +972,7 @@ export const calculatorTools: Tool[] = [
         a: "The generator uses the browser's cryptographic random source, which is far stronger than the pseudo-random generators used by most quick tools.",
       },
     ],
-    related: ["love-calculator", "percentage-calculator", "qr-code-generator"],
+    related: ["percentage-calculator", "qr-code-generator"],
     engine: {
       kind: "calc",
       fields: [
@@ -1078,84 +1015,6 @@ export const calculatorTools: Tool[] = [
             `Range: ${low} to ${high}`,
             v["unique"] === "no" ? "No repeats — every number is unique." : "Repeats allowed.",
             "Drawn with the browser's cryptographic random source.",
-          ],
-        };
-      },
-    },
-  },
-  {
-    slug: "love-calculator",
-    name: "Love Calculator",
-    category: "calculators",
-    tagline: "Measure the spark between two names.",
-    description:
-      "A playful love percentage between two names — a classic party trick that computes a match score in seconds. For entertainment only.",
-    keywords: ["love calculator", "love percentage", "love match test"],
-    addedAt: "2025-03-30",
-    disclaimer:
-      "This tool is for fun and entertainment only. No real-world compatibility can be measured by an algorithm — go with your heart, not a percentage.",
-    about:
-      "The love calculator is a classic internet pastime: two names in, one percentage out. The classic name-letter method compares the letters of both names to produce a match score, and the result is always good for a laugh — whether it says 87% soulmates or 34% doomed.",
-    formula: "Score = (matching letter positions ÷ total letters) adjusted by the classic love-name algorithm.",
-    howTo: [
-      "Type the first name.",
-      "Type the second name.",
-      "Press Calculate to reveal the match percentage and the verdict.",
-    ],
-    example:
-      "Entering “Ayesha” and “Omar” might return 84% — “a strong match, the stars are smiling”.",
-    faqs: [
-      {
-        q: "Is the love calculator accurate?",
-        a: "It is entertainment, not science. The percentage is computed from the names you enter, so it is consistent — but it is not a real measure of compatibility.",
-      },
-      {
-        q: "Can I use nicknames?",
-        a: "Yes. The score changes with the names entered, so try nicknames, full names or any combination you like.",
-      },
-    ],
-    related: ["random-number-generator", "percentage-calculator", "qr-code-generator"],
-    engine: {
-      kind: "calc",
-      fields: [
-        { name: "name1", label: "First name", type: "text", placeholder: "Ayesha" },
-        { name: "name2", label: "Second name", type: "text", placeholder: "Omar" },
-      ],
-      compute: (v) => {
-        const a = (v["name1"] ?? "").trim().toLowerCase();
-        const b = (v["name2"] ?? "").trim().toLowerCase();
-        if (!a || !b) return { error: "Enter both names." };
-        const letters = (s: string) => s.replace(/[^a-z]/g, "");
-        const la = letters(a);
-        const lb = letters(b);
-        if (!la || !lb) return { error: "Names must contain letters." };
-        let score = 50;
-        for (let i = 0; i < la.length; i++) {
-          for (let j = 0; j < lb.length; j++) {
-            if (la[i] === lb[j]) score += 3;
-          }
-        }
-        score += Math.min(20, Math.abs(la.length - lb.length) * 2);
-        const total = la.length + lb.length;
-        score = 50 + (score - 50) * (14 / Math.max(14, total));
-        const final = Math.max(0, Math.min(100, Math.round(score)));
-        const verdict =
-          final >= 90
-            ? "A legendary match — the stars are aligned."
-            : final >= 75
-              ? "A strong match — this one has real potential."
-              : final >= 60
-                ? "A promising spark — give it time."
-                : final >= 40
-                  ? "A friendly match — great chemistry, keep it casual."
-                  : "A tough match — but opposites can attract.";
-        return {
-          label: "Love match",
-          value: `${fmt(final, 0)}%`,
-          notes: [
-            verdict,
-            `Computed from the names “${a}” and “${b}” — try variations for a different score.`,
-            "For entertainment only.",
           ],
         };
       },
