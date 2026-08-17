@@ -41,7 +41,7 @@ export function ToolCard({ tool, showCategory = true }: { tool: Tool; showCatego
       to="/$slug"
       params={{ slug: tool.slug }}
       className={cn(
-        "group flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lift focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20",
+        "group flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-surface hover:shadow-lift focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20",
       )}
     >
       <div>

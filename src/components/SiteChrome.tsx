@@ -18,7 +18,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
       <div className="container-page flex h-16 items-center gap-4">
         <Logo />
 
@@ -83,20 +83,20 @@ export function SiteFooter() {
   ] as const;
 
   return (
-    <footer className="mt-20 border-t border-border bg-surface">
+    <footer className="mt-20 border-t border-footer-border bg-footer text-footer-foreground">
       <div className="container-page grid gap-10 py-12 md:grid-cols-4">
         <div>
-          <Logo />
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">{site.tagline}</p>
+          <Logo className="text-footer-foreground" />
+          <p className="mt-3 max-w-xs text-sm text-footer-muted">{site.tagline}</p>
         </div>
 
         <div className="md:col-span-2 grid grid-cols-2 gap-6 sm:grid-cols-3">
           {categories.map((c) => (
             <div key={c.id}>
-              <h2 className="text-sm font-semibold text-foreground">{c.name}</h2>
+              <h2 className="text-sm font-semibold text-footer-foreground">{c.name}</h2>
               <a
                 href={`/category/${c.slug}`}
-                className="mt-2 block text-sm text-muted-foreground transition hover:text-primary"
+                className="mt-2 block text-sm text-footer-muted transition hover:text-primary"
               >
                 Browse {c.name.toLowerCase()}
               </a>
@@ -105,11 +105,11 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Company</h2>
+          <h2 className="text-sm font-semibold text-footer-foreground">Company</h2>
           <ul className="mt-2 space-y-1.5">
             {legal.map(([label, href]) => (
               <li key={href}>
-                <a href={href} className="text-sm text-muted-foreground transition hover:text-primary">
+                <a href={href} className="text-sm text-footer-muted transition hover:text-primary">
                   {label}
                 </a>
               </li>
@@ -117,7 +117,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="container-page border-t border-border py-6 text-xs text-muted-foreground">
+      <div className="container-page border-t border-footer-border py-6 text-xs text-footer-muted">
         © {new Date().getFullYear()} {site.name}. All tools are free to use — no account required.
       </div>
     </footer>
